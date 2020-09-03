@@ -5,172 +5,168 @@ export default class Task extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      previousText: this.props.task.text || "Things To Do!",
-      text: this.props.task.text || "Things To Do!",
-      backgroundColor: this.props.task.backgroundColor,
-      completed: this.props.task.complete,
-      removed: this.props.task.deleted,
+      text: this.props.task.text || "Things To Do...",
+      date: this.props.task.createDate || 0,
+      complete: this.props.task.complete || false,
+      incomplete: this.props.task.incomplete || false,
+      remove: this.props.task.remove || false,
       edit: false,
+      dropDown: false,
     };
-
     this.enableEdit = this.enableEdit.bind(this);
-    // this.disableEdit = this.disableEdit.bind(this);
+    this.disableEdit = this.disableEdit.bind(this);
+    this.toggleEdit = this.toggleEdit.bind(this);
+    this.toggleDropDown = this.toggleDropDown.bind(this);
+    this.toggleComplete = this.toggleComplete.bind(this);
+    this.toggleIncomplete = this.toggleIncomplete.bind(this);
+    this.toggleRemove = this.toggleRemove.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleColor = this.handleColor.bind(this);
-    this.save = this.save.bind(this);
-    this.cancel = this.cancel.bind(this);
   }
-  enableEdit(e) {
+  enableEdit(e){
     this.setState({
       edit: true,
+    })
+  }
+  disableEdit(e) {
+    this.setState({
+      edit: false,
+    })
+  }
+  toggleEdit(e) {
+    this.setState({
+      edit: !this.state.edit,
     });
   }
-  // disableEdit(e) {
-  //   this.setState({
-  //     edit: false,
-  //   });
-  // }
+  toggleDropDown(e) {
+    this.setState({
+      dropDown: !this.state.dropDown,
+    });
+  }
+  toggleComplete(e) {
+    this.setState({
+      complete: !this.state.complete,
+      incomplete: false,
+    });
+  }
+  toggleIncomplete(e) {
+    this.setState({
+      incomplete: !this.state.incomplete,
+      complete: false,
+    });
+  }
+  toggleRemove(e) {
+    this.setState({
+      remove: !this.state.remove,
+    });
+  }
   handleChange(e) {
     this.setState({
       text: e.target.value,
     });
   }
-  handleColor(e) {
-    this.setState({
-      backgroundColor: e.target.style.backgroundColor,
-    });
-  }
-  save(e) {
-    console.log("save...");
-    this.setState({
-      previousText: this.state.text,
-      edit: false,
-    });
-  }
-  cancel(e) {
-    console.log("cancel...");
-    this.setState({
-      text: this.state.previousText,
-      edit: false,
-    });
-  }
-  render() {
-    // console.log("this.state.text", this.state.text);
-    // console.log("this.state.previousText", this.state.previousText);
-    let colors = this.props.colors.map((el) => {
-      return (
-        <i
-          className="rounded-circle mx-1"
-          style={{
-            cursor: "pointer",
-            height: "1.5rem",
-            width: "1.5rem",
-            backgroundColor: el,
-          }}
-          onClick={this.handleColor}
-        />
-      );
-    });
 
-    return this.state.edit ? (
+  render() {
+    return (
       <div>
         <div
           className="card my-2 p-2 d-flex flex-row align-items-center"
           style={{
-            // cursor: "pointer",
             backgroundColor: this.state.backgroundColor,
             position: "relative",
           }}
-          // onClick={this.toggleEdit}
-          // onBlur={this.cancel}
+        // onClick={this.toggleDropDown}
         >
-          <input
-            type="text"
-            style={{
-              backgroundColor: this.state.backgroundColor,
-              width: "100%",
-              fontSize: "1.5rem",
-              // border: "none",
-              resize: "none",
-              // cursor: "pointer",
-            }}
-            className="mx-3"
-            value={this.state.text}
-            onChange={this.handleChange}
-            autoFocus
-            // onBlur={this.cancel}
-          />
-          <i
-            className="fas fa-check-circle mx-1"
-            style={{
-              fontSize: "1.8rem",
-              cursor: "pointer",
-              color: "MediumSeaGreen",
-              // position: "absolute",
-              // top: "-0.3rem",
-              // right: "1rem",
-            }}
-            onClick={this.save}
-          />
-          <i
-            className="fas fa-times-circle mx-1"
-            style={{
-              fontSize: "1.8rem",
-              cursor: "pointer",
-              color: "Tomato",
-              // position: "absolute",
-              // top: "-0.3rem",
-              // right: "-0.5rem",
-            }}
-            onClick={this.cancel}
-          />
-        </div>
-        <div
-          className="card my-2 p-2 d-flex flex-row align-items-center"
-          style={{
-            backgroundColor: this.state.backgroundColor,
-            position: "relative",
-          }}
-        >
-          <span className="mx-3">Colors:</span>
-          {colors}
-        </div>
-      </div>
-    ) : (
-      <div>
-        <div
-          className="card my-2 p-2 d-flex flex-row align-items-center"
-          style={{
-            cursor: "pointer",
-            position: "relative",
-            backgroundColor: this.state.backgroundColor,
-          }}
-          onClick={this.enableEdit}
-        >
-          <div
-            style={{
-              width: "100%",
-              fontSize: "1.5rem",
-              // border: "none",
-              // resize: "none",
-              cursor: "pointer",
-            }}
-            className="mx-3 "
-          >
-            {this.state.text}
-          </div>
+          {this.state.edit ? (
+            <input
+              type="text"
+              style={{
+                backgroundColor: this.state.backgroundColor,
+                width: "100%",
+                fontSize: "1.5rem",
+
+                resize: "none",
+              }}
+              className="mx-3"
+              value={this.state.text}
+              onChange={this.handleChange}
+              autoFocus
+              onBlur={this.disableEdit}
+            />
+          ) : (
+              <div
+                style={{
+                  width: "100%",
+                  fontSize: "1.5rem",
+                }}
+                className="mx-3 "
+                onClick={this.enableEdit}
+              >
+                {this.state.text}
+                
+              </div>
+            )}
           <i
             className="fas fa-bars mr-3"
             style={{
               fontSize: "1.5rem",
               cursor: "pointer",
               color: "Gray",
-              // position: "absolute",
-              // top: "-0.3rem",
-              // right: "1rem",
             }}
+            onClick={this.toggleDropDown}
           />
         </div>
+
+        {this.state.dropDown ? (
+          <div
+            className="card my-2 p-2 d-flex flex-row align-items-center "
+            style={{
+
+              position: "relative",
+            }}
+          >
+            <span className='d-flex flex-row align-items-center w-100'>            <i
+              className="fas fa-check mx-3"
+              style={{
+                fontSize: "1.5rem",
+                cursor: "pointer",
+                color: this.state.complete ? "MediumSeaGreen" : "Gray",
+              }}
+              onClick={this.toggleComplete}
+            />
+              <i
+                className="fas fa-times mr-3"
+                style={{
+                  fontSize: "1.5rem",
+                  cursor: "pointer",
+                  color: this.state.incomplete ? "Tomato" : "Gray",
+                }}
+                onClick={this.toggleIncomplete}
+              />
+              {/* <i
+                className="fas fa-edit mr-3"
+                style={{
+                  fontSize: "1.5rem",
+                  cursor: "pointer",
+                  color: this.state.edit ? "Black" : "Gray",
+                }}
+                onClick={this.toggleEdit}
+              /> */}
+              </span>
+
+            <i
+              className="fas fa-trash mr-3"
+              style={{
+                fontSize: "1.5rem",
+                cursor: "pointer",
+                color: this.state.remove ? "Red" : "Gray",
+
+              }}
+              onClick={this.toggleRemove}
+            />
+          </div>
+        ) : (
+            <div></div>
+          )}
       </div>
     );
   }

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.toDoList;
+package com.example.demo;
 
-import com.example.toDoList.domain.User;
-import com.example.toDoList.repository.UserRepository;
+import com.example.demo.domain.User;
+import com.example.demo.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -37,9 +37,9 @@ public class DatabaseLoader implements CommandLineRunner { // <2>
 	@Override
 	public void run(final String... strings) throws Exception { // <4>
 
-		deleteAll();
-		addSampleData();
-		listAll();
+		// deleteAll();
+		// addSampleData();
+		// listAll();
 	}
 
 	public void deleteAll() {

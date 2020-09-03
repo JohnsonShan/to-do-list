@@ -28,98 +28,47 @@ class App extends React.Component {
       ],
     };
 
-    this.onCreate = this.onCreate.bind(this);
-    this.onUpdate = this.onUpdate.bind(this);
-    this.onDelete = this.onDelete.bind(this);
-    this.addNewTask = this.addNewTask.bind(this);
+    this.createTask = this.createTask.bind(this);
+    this.updateTask = this.updateTask.bind(this);
   }
-  addNewTask(e) {
-    // console.log("e.target", e.target.style.backgroundColor);
-    this.setState({
-      tasks: [
-        ...this.state.tasks,
-        {
-          color: "white",
-          text: "Things to do...",
-          completed: false,
-          removed: false,
-        },
-      ],
-    });
-  }
-  // tag::on-create[]
-  onCreate(newProduct) {
-    follow(client, root, ["products"]).done((response) => {
-      client({
-        method: "POST",
-        path: response.entity._links.self.href,
-        entity: newProduct,
-        headers: { "Content-Type": "application/json" },
-      });
-    });
-  }
-  // end::on-create[]
 
-  // tag::on-update[]
-  onUpdate(product, updatedProduct) {
-    console.log("product", product);
-    client({
-      method: "PUT",
-      path: product.entity._links.self.href,
-      entity: updatedProduct,
-      headers: {
-        "Content-Type": "application/json",
-        "If-Match": product.headers.Etag,
-      },
-    }).done(
-      (response) => {
-        /* Let the websocket handler update the state */
-      },
-      (response) => {
-        if (response.status.code === 403) {
-          alert(
-            "ACCESS DENIED: You are not authorized to update " +
-              product.entity._links.self.href
-          );
-        }
-        if (response.status.code === 412) {
-          alert(
-            "DENIED: Unable to update " +
-              product.entity._links.self.href +
-              ". Your copy is stale."
-          );
-        }
-      }
-    );
-  }
-  // end::on-update[]
 
-  // tag::on-delete[]
-  onDelete(product) {
-    client({ method: "DELETE", path: product.entity._links.self.href }).done(
-      (response) => {
-        /* let the websocket handle updating the UI */
-      },
-      (response) => {
-        if (response.status.code === 403) {
-          alert(
-            "ACCESS DENIED: You are not authorized to delete " +
-              product.entity._links.self.href
-          );
-        }
-      }
-    );
-  }
-  // end::on-delete[]
-
-  componentDidMount() {
+  LoadFromServer() {
     fetch("/getUser/" + this.props.user)
-      .then((p) => {
-        return p.json();
+      .then((response) => {
+        return response.json();
       })
       .then((json) => {
-        // console.log("json.name", json.name);
-        // console.log("json.notes", json.notes);
+        this.setState({
+          name: json.name,
+          tasks: json.tasks,
+        });
+      });
+  }
+  createTask() {
+    fetch('/createTask/' + this.props.user)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.setState({
+          name: json.name,
+          tasks: json.tasks,
+        });
+      });
+  }
+  updateTask(data) {
+    fetch('/updateTask/' + this.props.user, {
+      method: 'POST', // or 'PUT'
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
         this.setState({
           name: json.name,
           tasks: json.tasks,
@@ -127,13 +76,33 @@ class App extends React.Component {
       });
   }
 
+  componentDidMount() {
+    this.LoadFromServer();
+  }
+
   render() {
-    let tasks = this.state.tasks.map((el, i) => {
-      return <Task task={el} key={i} colors={this.state.colors} />;
+
+    let tasks = [];
+    let complete = [];
+    let incomplete = [];
+
+    this.state.tasks.map((el, i) => {
+      if (el.remove) {
+        return "";
+      }
+      if (el.complete) {
+        complete.push(<Task task={el} key={i} updateTask={this.updateTask} />);
+      } else if (el.incomplete) {
+        incomplete.push(<Task task={el} key={i} updateTask={this.updateTask} />);
+      } else {
+        tasks.push(<Task task={el} key={i} updateTask={this.updateTask} />);
+      }
+
+
     });
     return (
       <div className="d-flex flex-column justify-content-center align-items-center  ">
-        <div className="rwd-width my-3 p-3 d-flex flex-column justify-content-center align-items-center">
+        <div className="rwd-width my-3 p-3 d-flex flex-column justify-content-center align-items-start">
           <div className="w-100">
             <Nav
               brand={
@@ -148,19 +117,19 @@ class App extends React.Component {
                 this.props.login == "anonymousUser"
                   ? [<LoginDialog key="login" />, <SignupDialog key="signup" />]
                   : [
-                      <a
-                        className="m-2 btn btn-outline-primary"
-                        href="/logout"
-                        key="logout"
-                      >
-                        Log out
+                    <a
+                      className="m-2 btn btn-outline-primary"
+                      href="/logout"
+                      key="logout"
+                    >
+                      Log out
                       </a>,
-                    ]
+                  ]
               }
             />
           </div>
 
-          <h1>To Do List</h1>
+          <h1>To Do</h1>
 
           <div className="w-100 d-flex flex-column">
             {tasks}
@@ -173,10 +142,13 @@ class App extends React.Component {
                   cursor: "pointer",
                   color: "LightGray",
                 }}
-                onClick={this.addNewTask}
+                onClick={this.createTask}
               />
             </div>
           </div>
+          {complete.length ? <h1>Complete</h1> : ""}
+          {incomplete.length ? <h1>Incomplete</h1> : ""}
+
         </div>
 
         <div

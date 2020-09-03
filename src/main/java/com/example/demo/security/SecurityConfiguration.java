@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.toDoList.security;
+package com.example.demo.security;
 
 // import com.example.myshop.domain.Admin;
 // import com.example.myshop.domain.User;

@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.toDoList.domain;
-
-import com.example.toDoList.domain.Task;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+package com.example.demo.domain;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
@@ -61,7 +57,6 @@ public class User {
     this.name = name;
     this.setPassword(password);
     this.email = email;
-
     this.add(new Task());
   }
 
@@ -90,17 +85,18 @@ public class User {
     return password;
   }
 
-  public void add(Task task) {
+  public boolean add(Task task) {
 
-    Assert.notNull(task);
-    this.tasks.add(task);
+    // Assert.notNull(task);
+    return this.tasks.add(task);
   }
 
-  public void remove(Task task) {
+  public boolean remove(Task task) {
 
-    Assert.notNull(task);
+    // Assert.notNull(task);
 
-    this.tasks.remove(task);
+    return this.tasks.remove(task);
+
   }
 
   public Set<Task> getTasks() {
@@ -111,4 +107,7 @@ public class User {
     return roles;
   }
 
+  public boolean equals(User user) {
+    return this.id == user.id;
+  }
 }

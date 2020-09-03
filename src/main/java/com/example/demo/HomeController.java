@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.toDoList;
+package com.example.demo;
 
-import com.example.toDoList.domain.User;
-import com.example.toDoList.repository.UserRepository;
-import com.example.toDoList.security.SpringDataJpaUserDetailsService;
+import java.util.Set;
 
+import com.example.demo.domain.Task;
+import com.example.demo.domain.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.security.SpringDataJpaUserDetailsService;
+
+import org.hibernate.annotations.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +43,6 @@ public class HomeController {
 
 	@Autowired
 	UserRepository UserRepository;
-
 	@Autowired
 	SpringDataJpaUserDetailsService userDetailsService;
 
@@ -50,6 +53,34 @@ public class HomeController {
 		return new ResponseEntity<>(UserRepository.findByName(name), HttpStatus.OK); // <3>
 	}
 
+	@PostAuthorize("returnObject.body == null || returnObject.body.name == authentication.name")
+	@RequestMapping(value = "/createTask/{name}", method = RequestMethod.GET) // <2>
+	@ResponseBody
+	public ResponseEntity<User> createTask(@PathVariable String name) {
+
+		User user = UserRepository.findByName(name);
+
+		user.add(new Task());
+
+		UserRepository.save(user);
+
+		return new ResponseEntity<>(UserRepository.findByName(name), HttpStatus.OK); // <3>
+	}
+
+	@PostAuthorize("returnObject.body == null || returnObject.body.name == authentication.name")
+	@RequestMapping(value = "/updateTask/{name}", method = RequestMethod.POST) // <2>
+	@ResponseBody
+	public ResponseEntity<User> updateTask(@PathVariable String name, @RequestBody Task task) {
+
+		User user = UserRepository.findByName(name);
+
+		user.remove(task);
+		user.add(task);
+
+		UserRepository.save(user);
+
+		return new ResponseEntity<>(UserRepository.findByName(name), HttpStatus.OK); // <3>
+	}
 
 	@RequestMapping(value = "/") // <2>
 	public String index() {

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.toDoList.security;
+package com.example.demo.security;
 
-import com.example.toDoList.domain.User;
-import com.example.toDoList.repository.UserRepository;
+import com.example.demo.domain.User;
+import com.example.demo.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -33,20 +33,6 @@ public class SpringDataJpaUserDetailsService implements UserDetailsService {
 
 	@Autowired
 	UserRepository UserRepository;
-
-
-	// @Override
-	// public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-		
-	// 	return UserRepository;
-	// }
-
-	// private final AdminRepository repository;
-
-	// @Autowired
-	// public SpringDataJpaUserDetailsService(AdminRepository repository) {
-	// 	this.repository = repository;
-	// }
 
 	@Override
 	public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
