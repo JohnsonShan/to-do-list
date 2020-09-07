@@ -23,23 +23,13 @@ public class Task {
 
   private String id = new ObjectId().toString();
   private String text = "Things to do...";
-  private long lastModifiedDate;
+  private long createDate = new Date().getTime();
   private long dueDate = 0;
   private boolean complete = false;
   private boolean incomplete = false;
   private boolean remove = false;
 
   public Task() {
-    this.lastModifiedDate = new Date().getTime();
-  }
-
-  public Task(String text, boolean complete, boolean incomplete, boolean remove, long dueDate) {
-    this.text = text;
-    this.complete = complete;
-    this.incomplete = incomplete;
-    this.remove = remove;
-    this.dueDate = dueDate;
-    this.lastModifiedDate = new Date().getTime();
   }
 
 

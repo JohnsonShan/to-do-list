@@ -16,6 +16,7 @@
 package com.example.demo.domain;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +44,7 @@ public class User {
   private String password;
   private String email;
   private @Version @JsonIgnore Long version;
+  private long lastModifiedDate = new Date().getTime();
   private @JsonIgnore String[] roles = { "ROLE_USER" };
   private Set<Task> tasks = new HashSet<Task>();
 
@@ -84,7 +86,9 @@ public class User {
   public String getPassword() {
     return password;
   }
-
+  public void setLastModifiedDate(long d){
+    this.lastModifiedDate = d;
+  }
   public boolean add(Task task) {
 
     // Assert.notNull(task);
@@ -96,6 +100,14 @@ public class User {
     // Assert.notNull(task);
 
     return this.tasks.remove(task);
+
+  }
+
+  public void setTasks(Task[] tasks) {
+    this.tasks.clear();
+    for (int i = 0; i < tasks.length; i++) {
+      this.tasks.add(tasks[i]);
+    }
 
   }
 

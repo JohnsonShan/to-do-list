@@ -15,6 +15,7 @@
  */
 package com.example.demo;
 
+import java.util.Date;
 import java.util.Set;
 
 import com.example.demo.domain.Task;
@@ -27,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,14 +49,18 @@ public class HomeController {
 	@Autowired
 	SpringDataJpaUserDetailsService userDetailsService;
 
-	@PostAuthorize("returnObject.body == null || returnObject.body.name == authentication.name")
+	@PreAuthorize("authentication.name == #name")
+	// @PostAuthorize("returnObject.body == null || returnObject.body.name ==
+	// authentication.name")
 	@RequestMapping(value = "/getUser/{name}", method = RequestMethod.GET) // <2>
 	@ResponseBody
 	public ResponseEntity<User> getUser(@PathVariable String name) {
 		return new ResponseEntity<>(UserRepository.findByName(name), HttpStatus.OK); // <3>
 	}
 
-	@PostAuthorize("returnObject.body == null || returnObject.body.name == authentication.name")
+	@PreAuthorize("authentication.name == #name")
+	// @PostAuthorize("returnObject.body == null || returnObject.body.name ==
+	// authentication.name")
 	@RequestMapping(value = "/createTask/{name}", method = RequestMethod.GET) // <2>
 	@ResponseBody
 	public ResponseEntity<User> createTask(@PathVariable String name) {
@@ -61,22 +68,25 @@ public class HomeController {
 		User user = UserRepository.findByName(name);
 
 		user.add(new Task());
+		user.setLastModifiedDate(new Date().getTime());
 
 		UserRepository.save(user);
 
 		return new ResponseEntity<>(UserRepository.findByName(name), HttpStatus.OK); // <3>
 	}
 
-	@PostAuthorize("returnObject.body == null || returnObject.body.name == authentication.name")
-	@RequestMapping(value = "/updateTask/{name}", method = RequestMethod.POST) // <2>
+	@PreAuthorize("authentication.name == #name")
+	// @PostAuthorize("returnObject.body == null || returnObject.body.name ==
+	// authentication.name")
+	@RequestMapping(value = "/uploadTask/{name}", method = RequestMethod.POST) // <2>
 	@ResponseBody
-	public ResponseEntity<User> updateTask(@PathVariable String name, @RequestBody Task task) {
+	public ResponseEntity<User> updateTask(@PathVariable String name, @RequestBody Task[] tasks) {
 
 		User user = UserRepository.findByName(name);
 
-		user.remove(task);
-		user.add(task);
-
+		user.setTasks(tasks);
+		user.setLastModifiedDate(new Date().getTime());
+		
 		UserRepository.save(user);
 
 		return new ResponseEntity<>(UserRepository.findByName(name), HttpStatus.OK); // <3>

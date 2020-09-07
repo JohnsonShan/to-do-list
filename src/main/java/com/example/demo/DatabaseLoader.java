@@ -37,9 +37,9 @@ public class DatabaseLoader implements CommandLineRunner { // <2>
 	@Override
 	public void run(final String... strings) throws Exception { // <4>
 
-		// deleteAll();
-		// addSampleData();
-		// listAll();
+		deleteAll();
+		addSampleData();
+		listAll();
 	}
 
 	public void deleteAll() {
