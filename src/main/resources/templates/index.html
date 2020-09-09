@@ -20,7 +20,7 @@
 
     <!-- tag::auth[] -->
     <div class='d-none'>
-        Hello, <span id="name" th:text="${#authentication.name}">user</span>.
+        Hello, <span id="name" th:text="${#authentication.name}"></span>.
     </div>
     <div class='d-none' id='auth' sec:authorize="hasRole('ROLE_ADMIN')">
         This will only be displayed if authenticated user has role ROLE_ADMIN.

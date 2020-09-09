@@ -1,19 +1,20 @@
 "use strict";
 
-import LoginDialog from "./loginDialog";
-import SignupDialog from "./signupDialog";
+import Login from "./login";
+import Signup from "./signup";
 import Nav from "./nav";
 import Task from "./task";
 import React from "react";
 import ReactDOM from "react-dom";
-
 const root = "/api";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
+      login: this.props.user != 'anonymousUser',
+      name: this.props.user,
+      form: 'login',
       tasks: [],
       synchronized: true,
       lastModifiedDate: 0,
@@ -34,22 +35,26 @@ class App extends React.Component {
     this.createTask = this.createTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
     this.uploadTask = this.uploadTask.bind(this);
+    this.toggleForm = this.toggleForm.bind(this);
   }
 
 
   LoadFromServer() {
-    fetch("/getUser/" + this.props.user)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        // console.log('json', json);
-        this.setState({
-          name: json.name,
-          tasks: json.tasks,
-          lastModifiedDate: json.lastModifiedDate,
+
+    if (this.state.login) {
+      fetch("/getUser/" + this.props.user)
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          // console.log('json', json);
+          this.setState({
+
+            tasks: json.tasks,
+            lastModifiedDate: json.lastModifiedDate,
+          });
         });
-      });
+    }
   }
 
   updateTask(task, index) {
@@ -76,7 +81,7 @@ class App extends React.Component {
       })
       .then((json) => {
         this.setState({
-          name: json.name,
+
           tasks: json.tasks,
           synchronized: true,
           lastModifiedDate: Date.now(),
@@ -102,17 +107,34 @@ class App extends React.Component {
         }
       })
   }
+  toggleForm() {
+    console.log(this.state.form)
+    if (this.state.form == 'login') {
+      this.setState({
+        form: 'signup'
+      })
+    } else {
+      this.setState({
+        form: 'login'
+      })
+    }
+  }
 
   componentDidMount() {
+
+
     this.LoadFromServer();
     let intervalId = setInterval(() => {
       console.log('No change...')
-      if (this.state.synchronized == false && Date.now() - this.state.lastModifiedDate >= 5000) {
+      if (this.state.synchronized == false && Date.now() - this.state.lastModifiedDate >= 2000) {
         console.log('Synchronizing...')
         this.uploadTask();
       }
-    }, 5000)
+    }, 2000)
     this.setState({ intervalId: intervalId });
+
+
+
   }
 
   componentWillUnmount() {
@@ -150,100 +172,129 @@ class App extends React.Component {
       <div className="d-flex flex-column justify-content-center align-items-center  ">
 
 
-        <div className="rwd-width my-3 p-3 d-flex flex-column justify-content-center align-items-start">
+        <div className="rwd-width my-3 d-flex flex-column justify-content-center align-items-start">
           <div className="w-100">
             <Nav
               brand={
-                <i
-                  className="fas fa-robot "
-                  style={{ fontSize: "2rem", cursor: "pointer" }}
-                >
-                  &nbsp;Johnson
+                this.state.login ?
+                  <i
+                    className="fas "
+                    style={{ fontSize: "2rem" }}
+                  >
+                    &nbsp;Hi, {this.state.name}.
+                  </i>
+                  :
+                  <i
+                    className="fas "
+                    style={{ fontSize: "2rem" }}
+                  >
+                    &nbsp;Hi, Guest.
                 </i>
               }
               items={
-                this.props.login == "anonymousUser"
-                  ? [<LoginDialog key="login" />, <SignupDialog key="signup" />]
-                  : [
+                this.state.login
+                  ? [
                     <a
                       className="m-2 btn btn-outline-primary"
                       href="/logout"
                       key="logout"
                     >
                       Log out
-                      </a>,
+                    </a>
+                    ,
                   ]
+                  :
+                  []
               }
             />
           </div>
 
-          <h1>To Do</h1>
+          {this.state.login ?
+            <div className='w-100'>
 
-          <div className="w-100 d-flex flex-column">
-            {tasks}
 
-            <div className="my-2 p-2 d-flex flex-row align-items-center justify-content-center ">
-              <i
-                className="fas fa-plus-circle mr-3"
-                style={{
-                  fontSize: "3rem",
-                  cursor: "pointer",
-                  color: "LightGray",
-                }}
-                onClick={this.createTask}
-              />
+              <h1>To Do</h1>
+
+              <div className="w-100 d-flex flex-column">
+                {tasks}
+
+                <div className="my-2 p-2 d-flex flex-row align-items-center justify-content-center ">
+                  <i
+                    className="fas fa-plus-circle mr-3"
+                    style={{
+                      fontSize: "3rem",
+                      cursor: "pointer",
+                      color: "LightGray",
+                    }}
+                    onClick={this.createTask}
+                  />
+                </div>
+              </div>
+              {complete.length ?
+                <h1>Complete</h1> : ""
+              }
+              {complete.length ?
+                <div className="w-100 d-flex flex-column">
+                  {complete}
+                </div>
+                : ""
+              }
+              {incomplete.length ?
+                <h1>Incomplete</h1> : ""
+              }
+              {incomplete.length ?
+                <div className="w-100 d-flex flex-column">
+                  {incomplete}
+                </div>
+                : ""
+              }
             </div>
-          </div>
-          {complete.length ?
-            <h1>Complete</h1> : ""
+
+            : this.state.form == 'login' ?
+              <div>
+                <Login toggleForm={this.toggleForm} />
+              </div>
+              :
+              <div>
+                <Signup toggleForm={this.toggleForm} />
+              </div>
           }
-          {complete.length ?
-            <div className="w-100 d-flex flex-column">
-              {complete}
-            </div>
-            : ""
-          }
-          {incomplete.length ?
-            <h1>Incomplete</h1> : ""
-          }
-          {incomplete.length ?
-            <div className="w-100 d-flex flex-column">
-              {incomplete}
-            </div>
-            : ""
-          }
+
         </div>
 
         <div
           id="footer"
-          className="container-fluid d-flex flex-column justify-content-center align-items-center p-4 mb-5"
+          className="rwd-width d-flex flex-column justify-content-center align-items-start  my-5"
         >
           <p>© Copyright 2020 Johnson Shan - All Rights Reserved.</p>
         </div>
 
-        <div className={`alert ${this.state.synchronized ? 'alert-success' : 'alert-secondary'} d-flex flex-column justify-content-center align-items-center`}
-          style={{
-            position: 'fixed',
-            bottom: '0px',
-            marginBottom: '0px',
-            width: '100%'
-          }}>
+        {this.state.login ?
+          <div className={`alert ${this.state.synchronized ? 'alert-success' : 'alert-secondary'} d-flex flex-column justify-content-center align-items-center`}
+            style={{
+              position: 'fixed',
+              bottom: '0px',
+              marginBottom: '0px',
+              width: '100%'
+            }}>
 
-          <div className='rwd-width d-flex flex-column justify-content-center align-items-center'>
-            {this.state.synchronized ?
-              <span>
-                Last synchronized time is {new Date(this.state.lastModifiedDate).toString()}.
-              </span>
-              : <i
-                className="fas fa-spinner "
-                style={{ fontSize: "2rem" }}
-              />}
+            <div className='rwd-width d-flex flex-column justify-content-center align-items-center'>
+              {this.state.synchronized ?
+                <span>
+                  Last synchronized time is {new Date(this.state.lastModifiedDate).toString()}.
+            </span>
+                : <i
+                  className="fas fa-spinner "
+                  style={{ fontSize: "2rem" }}
+                />}
 
+            </div>
           </div>
+          :
+          ''
+        }
 
 
-
-        </div>
       </div>
     );
   }

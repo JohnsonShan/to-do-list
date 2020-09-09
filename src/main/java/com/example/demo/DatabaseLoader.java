@@ -26,8 +26,7 @@ import org.springframework.stereotype.Component;
 @Component // <1>
 public class DatabaseLoader implements CommandLineRunner { // <2>
 
-	// @Autowired
-	// AdminRepository AdminRepository;
+
 
 
 
@@ -37,9 +36,9 @@ public class DatabaseLoader implements CommandLineRunner { // <2>
 	@Override
 	public void run(final String... strings) throws Exception { // <4>
 
-		deleteAll();
-		addSampleData();
-		listAll();
+		// deleteAll();
+		// addSampleData();
+		// listAll();
 	}
 
 	public void deleteAll() {
