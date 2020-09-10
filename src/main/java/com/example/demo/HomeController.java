@@ -50,8 +50,6 @@ public class HomeController {
 	SpringDataJpaUserDetailsService userDetailsService;
 
 	@PreAuthorize("authentication.name == #name")
-	// @PostAuthorize("returnObject.body == null || returnObject.body.name ==
-	// authentication.name")
 	@RequestMapping(value = "/getUser/{name}", method = RequestMethod.GET) // <2>
 	@ResponseBody
 	public ResponseEntity<User> getUser(@PathVariable String name) {
@@ -59,25 +57,6 @@ public class HomeController {
 	}
 
 	@PreAuthorize("authentication.name == #name")
-	// @PostAuthorize("returnObject.body == null || returnObject.body.name ==
-	// authentication.name")
-	@RequestMapping(value = "/createTask/{name}", method = RequestMethod.GET) // <2>
-	@ResponseBody
-	public ResponseEntity<User> createTask(@PathVariable String name) {
-
-		User user = UserRepository.findByName(name);
-
-		user.add(new Task());
-		user.setLastModifiedDate(new Date().getTime());
-
-		UserRepository.save(user);
-
-		return new ResponseEntity<>(UserRepository.findByName(name), HttpStatus.OK); // <3>
-	}
-
-	@PreAuthorize("authentication.name == #name")
-	// @PostAuthorize("returnObject.body == null || returnObject.body.name ==
-	// authentication.name")
 	@RequestMapping(value = "/uploadTask/{name}", method = RequestMethod.POST) // <2>
 	@ResponseBody
 	public ResponseEntity<User> updateTask(@PathVariable String name, @RequestBody Task[] tasks) {

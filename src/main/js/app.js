@@ -34,6 +34,7 @@ class App extends React.Component {
 
     this.createTask = this.createTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
+    this.removeTask = this.removeTask.bind(this);
     this.uploadTask = this.uploadTask.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
   }
@@ -57,6 +58,16 @@ class App extends React.Component {
     }
   }
 
+  createTask(e) {
+    let task = { "text": "Things to do...", "createDate": Date.now(), "dueDate": 0, "complete": false, "incomplete": false, "remove": false }
+    let tasks = this.state.tasks;
+    tasks.push(task);
+    this.setState({
+      tasks: tasks,
+      synchronized: false,
+    })
+
+  }
   updateTask(task, index) {
     let tasks = this.state.tasks;
     tasks[index] = task;
@@ -66,29 +77,15 @@ class App extends React.Component {
       synchronized: false,
     })
   }
-
-  createTask(e) {
+  removeTask(index) {
+    let tasks = this.state.tasks;
+    tasks.splice(index, 1);
 
     this.setState({
+      tasks: tasks,
       synchronized: false,
     })
-
-    fetch('/createTask/' + this.props.user, {
-      method: 'GET', // or 'PUT'
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.setState({
-
-          tasks: json.tasks,
-          synchronized: true,
-          lastModifiedDate: Date.now(),
-        });
-      });
   }
-
   uploadTask() {
 
     fetch('/uploadTask/' + this.props.user, {
@@ -125,15 +122,13 @@ class App extends React.Component {
 
     this.LoadFromServer();
     let intervalId = setInterval(() => {
-      console.log('No change...')
-      if (this.state.synchronized == false && Date.now() - this.state.lastModifiedDate >= 2000) {
-        console.log('Synchronizing...')
+      // console.log('No change...')
+      if (this.state.synchronized == false) {
+        // console.log('Synchronizing...')
         this.uploadTask();
       }
     }, 2000)
     this.setState({ intervalId: intervalId });
-
-
 
   }
 
@@ -148,22 +143,19 @@ class App extends React.Component {
     let complete = [];
     let incomplete = [];
 
-    this.state.tasks.sort((a, b) => { return b.createDate - a.createDate; });
+    this.state.tasks.sort((a, b) => { return a.createDate - b.createDate; });
 
     this.state.tasks.map((el, i) => {
-      if (el.remove) {
-        return;
-      }
 
       // console.log('el', el);
 
       if (el.complete) {
 
-        complete.push(<Task task={el} key={i} index={i} updateTask={this.updateTask} color='MediumSeaGreen' />);
+        complete.push(<Task task={el} key={i} index={i} updateTask={this.updateTask} removeTask={this.removeTask} color='MediumSeaGreen' />);
       } else if (el.incomplete) {
-        incomplete.push(<Task task={el} key={i} index={i} updateTask={this.updateTask} color='Tomato' />);
+        incomplete.push(<Task task={el} key={i} index={i} updateTask={this.updateTask} removeTask={this.removeTask} color='Tomato' />);
       } else {
-        tasks.push(<Task task={el} key={i} index={i} updateTask={this.updateTask} />);
+        tasks.push(<Task task={el} key={i} index={i} updateTask={this.updateTask} removeTask={this.removeTask} />);
       }
 
 
@@ -185,11 +177,11 @@ class App extends React.Component {
                   </i>
                   :
                   <i
-                    className="fas "
+                    className="fas fa-robot"
                     style={{ fontSize: "2rem" }}
                   >
-                    &nbsp;Hi, Guest.
-                </i>
+                    &nbsp;Johnson
+                  </i>
               }
               items={
                 this.state.login

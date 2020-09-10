@@ -59,7 +59,7 @@ public class User {
     this.name = name;
     this.setPassword(password);
     this.email = email;
-    this.add(new Task());
+    this.tasks.add(new Task());
   }
 
   public User(String name, String password, String email, String... roles) {
@@ -67,7 +67,7 @@ public class User {
     this.setPassword(password);
     this.email = email;
     this.roles = roles;
-    this.add(new Task());
+    this.tasks.add(new Task());
 
   }
 
@@ -88,19 +88,6 @@ public class User {
   }
   public void setLastModifiedDate(long d){
     this.lastModifiedDate = d;
-  }
-  public boolean add(Task task) {
-
-    // Assert.notNull(task);
-    return this.tasks.add(task);
-  }
-
-  public boolean remove(Task task) {
-
-    // Assert.notNull(task);
-
-    return this.tasks.remove(task);
-
   }
 
   public void setTasks(Task[] tasks) {

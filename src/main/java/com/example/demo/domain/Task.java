@@ -21,28 +21,13 @@ import lombok.Data;
 public class Task {
 
 
-  private String id = new ObjectId().toString();
+  // private String id = new ObjectId().toString();
   private String text = "Things to do...";
   private long createDate = new Date().getTime();
-  private long dueDate = 0;
+  // private long dueDate = 0;
   private boolean complete = false;
   private boolean incomplete = false;
-  private boolean remove = false;
 
   public Task() {
   }
-
-
-  @Override
-	public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Task task = (Task) o;
-    return Objects.equals(id, task.id);
-  }
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
 }

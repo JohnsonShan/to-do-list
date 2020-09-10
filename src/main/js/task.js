@@ -57,10 +57,7 @@ export default class Task extends React.Component {
   }
 
   remove(e) {
-
-    let task = this.props.task;
-    task.remove = true;
-    this.props.updateTask(task, this.props.index)
+    this.props.removeTask(this.props.index)
   }
 
   handleChange(e) {
