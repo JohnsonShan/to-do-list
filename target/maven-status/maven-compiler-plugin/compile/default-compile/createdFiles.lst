@@ -1,0 +1,9 @@
+com\example\demo\security\SpringDataJpaUserDetailsService.class
+com\example\demo\DatabaseLoader.class
+com\example\demo\security\SecurityConfiguration.class
+com\example\demo\repository\UserRepository.class
+com\example\demo\HomeController.class
+com\example\demo\domain\User.class
+com\example\demo\domain\Task.class
+com\example\demo\ReactAndSpringDataRestApplication.class
+com\example\demo\SpringDataRestEventHandler.class

@@ -1,0 +1,49 @@
+.test {
+    border: 2px solid black;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    padding:0.5rem;
+}
+
+s {
+    opacity: 0.7;
+    font-weight: 900;
+}
+
+.rwd-width {
+    width: 80vw;
+}
+
+.add-line {
+    border-top: 5px solid black;
+    margin-bottom: 10vh;
+}
+
+.add-thin-line {
+    width: 100%;
+    border-top: 1px solid rgb(179, 174, 174);
+}
+
+@media only screen and (min-width: 992px) {
+    .rwd-width {
+        width: 85vw;
+    }
+}
+@media only screen and (max-width: 992px) {
+    .rwd-width {
+        width: 90vw;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .rwd-width {
+        width: 90vw;
+    }
+}

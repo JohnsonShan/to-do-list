@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head lang="en">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>To-Do-List</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel='stylesheet' href='/style.css' />
+</head>
+
+<body>
+
+    <!-- tag::auth[] -->
+    <div class='d-none'>
+        Hello, <span id="name" th:text="${#authentication.name}"></span>.
+    </div>
+    <div class='d-none' id='auth' sec:authorize="hasRole('ROLE_ADMIN')">
+        This will only be displayed if authenticated user has role ROLE_ADMIN.
+    </div>
+    <!-- end::auth[] -->
+
+    <div id="react" ></div>
+
+    <script src="built/bundle.js"></script>
+
+</body>
+
+</html>
